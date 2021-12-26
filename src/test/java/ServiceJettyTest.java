@@ -1,15 +1,13 @@
 import static org.junit.Assert.assertEquals;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-
+import example.service.MyService;
+import jakarta.ws.rs.client.Client;
+import jakarta.ws.rs.client.ClientBuilder;
+import jakarta.ws.rs.client.WebTarget;
+import jakarta.ws.rs.core.MediaType;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import example.guice.Service;
 
 public class ServiceJettyTest {
 
@@ -39,9 +37,7 @@ public class ServiceJettyTest {
                         .request(MediaType.TEXT_PLAIN_TYPE)
                         .get(String.class);
 
-        assertEquals(Service.SERVICE_STRING, entity);
-        
-        
+        assertEquals(MyService.SERVICE_STRING, entity);
     }
 
 }

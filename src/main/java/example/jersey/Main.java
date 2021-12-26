@@ -1,52 +1,44 @@
 package example.jersey;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.servlet.GuiceServletContextListener;
-import com.google.inject.servlet.ServletModule;
+import org.eclipse.jetty.server.Server;
+import org.glassfish.jersey.jetty.JettyHttpContainerFactory;
+import org.glassfish.jersey.server.ResourceConfig;
 
-import example.guice.Service;
-//import com.sun.jersey.api.core.PackagesResourceConfig;
-//import com.sun.jersey.api.core.ResourceConfig;
-//import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
+import java.net.URI;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-/**
- * User: Renato
- */
-public class Main extends GuiceServletContextListener {
+public class Main {
 
-    public static Injector injector;
-    
-    @Override
-    protected Injector getInjector() {
-        System.out.println("Getting injector");
-        // return null;
-        // final ResourceConfig rc = new PackagesResourceConfig( "com.aptusinteractive.server" );
+    public static void main(String[] args) {
+        ResourceConfig config = new ApplicationResourceConfig();
+        final Server server =
+                JettyHttpContainerFactory.createServer(
+                        URI.create("http://localhost:8080/"), config);
 
-        // return Guice.createInjector( new ServletModule() {
-        // @Override
-        // protected void configureServlets() {
-        // bind( new TypeLiteral<Dao<String>>() {
-        // } ).to( StuffDao.class );
-        //
-        // for ( Class<?> resource : rc.getClasses() ) {
-        // System.out.println( "Binding resource: " + resource.getName() );
-        // bind( resource );
-        // }
-        //
-        // serve( "/services/*" ).with( GuiceContainer.class );
-        // }
-        // } );
+        try {
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                try {
+                    System.out.println("Shutting down the application...");
+                    server.stop();
+                    System.out.println("Done, exit.");
+                } catch (Exception e) {
+                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, e);
+                }
+            }));
 
-        injector = Guice.createInjector(new ServletModule() {
-            // Configure your IOC
-            @Override
-            protected void configureServlets() {
-                bind(Service.class);
-            }
-        });
-        
-        return injector;
+            System.out.println(
+                    String.format("Application started.%nStop the application using CTRL+C"));
 
+            // block and wait shut down signal, like CTRL+C
+            Thread.currentThread().join();
+
+            // alternative
+            // Thread.sleep(Long.MAX_VALUE);       // sleep forever...
+            // Thread.sleep(Integer.MAX_VALUE);    // sleep around 60+ years
+
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }
