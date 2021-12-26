@@ -20,9 +20,12 @@ public class GuiceFeature implements Feature {
         GuiceIntoHK2Bridge guiceBridge = locator.getService(GuiceIntoHK2Bridge.class);
         guiceBridge.bridgeGuiceInjector(ApplicationGuiceServletContextListener.injector);
 
+        // When I debug through the HK2 container I see that instead of Service ServiceImpl being registered.
+        // Regardless of that justInTimeResolution in GuiceToHk2JITResolver fails while Injectee.parent is null;
         Service service = InjectionManagerProvider.getInjectionManager(context)
                 .getInstance(ServiceImpl.class);
 
+        // Resolved succesfully
         Service guiceService = ApplicationGuiceServletContextListener.injector.getInstance(Service.class);
 
         return true;
