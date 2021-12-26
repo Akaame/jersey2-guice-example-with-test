@@ -1,37 +1,29 @@
 package example.jersey;
 
 import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriInfo;
 
-import com.google.inject.servlet.RequestScoped;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
 
 import example.guice.Service;
+import org.glassfish.jersey.process.internal.RequestScoped;
 
-
-
-/**
- * Root resource (exposed at "myresource" path)
- */
 @RequestScoped
 @Path("myresource")
 public class MyResource {
-
+	@Inject
 	private Service service;
 
-	@Inject
-	public MyResource(Service service) {
-		this.service = service;
+	public MyResource() {
+
 	}
 
 	@GET
 	@Produces(MediaType.TEXT_PLAIN)
-	public String getIt(@Context UriInfo uriInfo) {
-	    
+	public String getIt() {
+		System.out.println(service);
 		return service.get();
 	}
 }
